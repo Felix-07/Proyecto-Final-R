@@ -9,7 +9,6 @@
 #Ana Katherine Cuevas Flores
 #Félix Alberto Nieto García
 #Daniel Gómez Avín
-#Santiago Peña Rodríguez
 #Alejandro De Fuentes Martínez
 
 #Resumen: 
@@ -231,9 +230,160 @@ ProbCoM2
 
 
 
+#Postwork 5
+
+#1. A partir del conjunto de datos de soccer de la liga española de las temporadas 
+#2017/2018, 2018/2019 y 2019/2020, crea el data frame SmallData, que contenga las
+#columnas date, home.team, home.score, away.team y away.score; Con ayuda de la función
+#write.csv guarda el data frame como un archivo csv con nombre soccer.csv. 
+
+
+LinkT1718 <- "https://www.football-data.co.uk/mmz4281/1718/SP1.csv"
+LinkT1819 <- "https://www.football-data.co.uk/mmz4281/1819/SP1.csv"
+LinkT1920 <- "https://www.football-data.co.uk/mmz4281/1920/SP1.csv"
+
+Links <- list(LinkT1718,LinkT1819,LinkT1920)
+
+SmallData <- data.frame(date = character(),
+                        home.team = character(),
+                        home.score = numeric(),
+                        away.team  = character(),
+                        away.score = numeric())
+
+
+for(i in 1:length(Links)){
+  D <- read.csv(Links[[i]])
+  N <- select(D, date = Date, home.team = HomeTeam,home.score = FTHG, away.team = AwayTeam, away.score = FTAG)
+  SmallData <- rbind(SmallData,N)
+  print(paste('Dimensión con',i,'fichero cargado:',dim(SmallData)[1]))
+}
+
+SmallData <- mutate(SmallData,date= as.Date(SmallData$date, format = "%d/%m/%y"))
+
+str(SmallData)
+
+write.csv(SmallData, file="soccer.csv", row.names = FALSE)
+
+library(fbRanks)
+
+
+#2. Con la función create.fbRanks.dataframes del paquete fbRanks importe el 
+#archivo soccer.csv a R y al mismo tiempo asignelo a una variable llamada 
+#listasoccer. Se creará una lista con los elementos scores y teams que son 
+#data frames listos para la función rank.teams. Asigna estos data frames a 
+#variables llamadas anotaciones y equipos.
+
+
+listasoccer <- create.fbRanks.dataframes("soccer.csv")
+str(listasoccer)
+
+anotaciones <- listasoccer$scores
+equipos <- listasoccer$teams
+
+#3. Con ayuda de la función unique crea un vector de fechas (fecha) que no se
+#repitan y que correspondan a las fechas en las que se jugaron partidos. Crea 
+#una variable llamada n que contenga el número de fechas diferentes. Posteriormente,
+#con la función rank.teams y usando como argumentos los data frames anotaciones 
+#y equipos, crea un ranking de equipos usando únicamente datos desde la fecha 
+#inicial y hasta la penúltima fecha en la que se jugaron partidos, estas fechas
+#las deberá especificar en max.date y min.date. Guarda los resultados con el 
+#nombre ranking.
+
+
+fechas <- unique(listasoccer$scores$date) #Ya están en orden
+n <- length(fechas)
+print(paste('Existen',n,'fechas diferentes'))
+
+
+rango <- fechas[c(1,n-1)]
+diff(rango)
+
+
+ranking <- rank.teams(scores=anotaciones, teams = equipos, max.date = rango[2], min.date = rango[1])
+
+
+#4. Finalmente estima las probabilidades de los eventos, el equipo de casa 
+#gana, el equipo visitante gana o el resultado es un empate para los partidos 
+#que se jugaron en la última fecha del vector de fechas fecha. Esto lo puedes 
+#hacer con ayuda de la función predict y usando como argumentos ranking y 
+#fecha[n] que deberá especificar en date
+
+prediccion <- predict.fbRanks(ranking, max.date = rango[2], min.date = rango[1])
+
+str(prediccion)
+
+
+#Postwork 6
+
+#Importa el conjunto de datos match.data.csv a R
+
+library(dplyr)
+library(lubridate)
+
+LinkDatos <- 'https://raw.githubusercontent.com/beduExpert/Programacion-R-Santander-2021/main/Sesion-06/Postwork/match.data.csv'
+DatosMatch <- read.csv(LinkDatos)
+
+DatosMatch <- mutate(DatosMatch,date= as.Date(DatosMatch$date, format = "%Y-%m-%d") )
+
+str(DatosMatch)
+
+#1. Agrega una nueva columna sumagoles que contenga la suma de 
+#goles por partido.
+
+DatosMatch<- mutate(DatosMatch,total.goles=DatosMatch$home.score+DatosMatch$away.score)
+head(DatosMatch)
+
+#2. Obtén el promedio por mes de la suma de goles.
+
+goles<- DatosMatch %>% 
+  group_by( Yr =year(date),Mn = month(date)) %>% 
+  summarise(mean = mean(total.goles))
+
+str(goles)
+
+#3. Crea la serie de tiempo del promedio por mes de la suma de goles hasta 
+#diciembre de 2019.
+
+SerieGolM <- ts(goles, st= c(2010,8), end = c(2019,12), fr = 12)
+
+#4. Grafica la serie de tiempo.
+
+plot(SerieGolM, xlab = "Tiempo", ylab = "Promedio de goles", main = "Serie del promedio de goles de la Liga Española",
+     sub = "Agrupación mensual: Agosto de 2010 a Diciembre de 2019")
 
 
 
+#Postwork 7
 
+#Utilizando el manejador de BDD Mongodb Compass
+#1. Alojar el fichero match.data.csv en una base de datos llamada match_games, 
+#nombrando al collection como match
 
+m <- mongo(collection='match',
+           db='match_games',
+           url = "",
+           verbose = FALSE)
 
+LinkM <-'https://raw.githubusercontent.com/beduExpert/Programacion-R-Santander-2021/main/Sesion-07/Postwork/match.data.csv'
+DatosMATCH <-read.csv(LinkM)
+
+m$insert(DatosMATCH)
+
+#2. Una vez hecho esto, realizar un count para conocer el número de registros
+#que se tiene en la base
+
+NDoc <- m$count('{}')
+
+print(paste('Se guardaron',NDoc,'documentos'))
+
+#3. Realiza una consulta utilizando la sintaxis de Mongodb en la base de datos,
+#para conocer el número de goles que metió el Real Madrid el 20 de diciembre de
+#2015 y contra que equipo jugó, ¿perdió ó fue goleada?
+
+consulta <- m$find(query = '{"date" : "2015-12-20", "home_team" : "Real Madrid" }')
+print(consulta)
+#Real madrid contra Vallecano y Ganó Real madrid 
+
+#4. Por último, no olvides cerrar la conexión con la BDD
+
+rm(m)
