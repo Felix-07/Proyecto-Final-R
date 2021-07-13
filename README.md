@@ -3,9 +3,13 @@
 ## Integrantes
 
 -Ximena Ávila Villagómez
+
 -Ana Katherine Cuevas Flores
+
 -Félix Alberto Nieto García
+
 -Daniel Gómez Avín
+
 -Alejandro De Fuentes Martínez
 
 ## Resumen 
