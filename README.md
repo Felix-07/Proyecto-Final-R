@@ -25,6 +25,8 @@ El trabajo es sobre el análisis de datos de partido de fútbol de la selección
 7. RStudio Cloud - Github, conexiones con BDs y lectura de datos externos
 8. Dashboards con Shiny - Entorno GUI
 
+**Nota**:Se puede ver evidencia del GUI [aquí](https://github.com/Felix-07/Proyecto-Final-R/tree/main/Evidencia%20GUI) y los datos los encontrararas en la carpeta [GUI](https://github.com/Felix-07/Proyecto-Final-R/tree/main/GUI).
+
 ## Código
 Se presenta el proyecto en [Script de R]( https://github.com/Felix-07/Proyecto-Final-R/blob/main/PostWork.R) para trabajar en Rstudio y en [Script de Jupyternotebook](https://github.com/Felix-07/Proyecto-Final-R/blob/main/PostWork.ipynb) en el se puede ver los resultados y las gráficas obtenidas.
 
