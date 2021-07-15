@@ -32,6 +32,6 @@ El trabajo es sobre el análisis de datos de partido de fútbol de la selección
 ## Código
 Se presenta el proyecto en [Script de R]( https://github.com/Felix-07/Proyecto-Final-R/blob/main/PostWork.R) para trabajar en Rstudio y en [Script de Jupyternotebook](https://github.com/Felix-07/Proyecto-Final-R/blob/main/PostWork.ipynb) en el se puede ver los resultados y las gráficas obtenidas.
 
-## Video
+## Vídeo
 
-Se presenta un [video](https://www.youtube.com/watch?v=-5GcefGOXy0) donde cada uno de los integrantes presenta de manera breve cada postwork juntos con los resultados del proyecto.
+Se presenta un [vídeo](https://www.youtube.com/watch?v=-5GcefGOXy0) donde cada uno de los integrantes presenta de manera breve cada postwork juntos con los resultados del proyecto.
